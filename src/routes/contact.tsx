@@ -22,7 +22,7 @@ const schema = z.object({
 const field = "mt-2 w-full rounded-sm border border-input bg-background px-4 py-3 text-foreground placeholder:text-muted-foreground/60 focus:border-gold focus:outline-none";
 
 function Contact() {
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<Partial<Record<"name"|"phone"|"email"|"area"|"message", string>>>({});
   const [sent, setSent] = useState(false);
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {
@@ -32,7 +32,7 @@ function Contact() {
     if (!r.success) {
       const errs: Record<string, string> = {};
       r.error.issues.forEach((i) => (errs[String(i.path[0])] = i.message));
-      setErrors(errs);
+      setErrors(errs as typeof errors);
       return;
     }
     setErrors({});
@@ -89,7 +89,7 @@ function Contact() {
   );
 }
 
-function Field({ id, label, error, children }: { id: string; label: string; error?: string; children: React.ReactNode }) {
+function Field({ id, label, error, children }: { id: string; label: string; error?: string | undefined; children: React.ReactNode }) {
   return (
     <div>
       <label htmlFor={id} className="text-sm font-medium text-foreground/90">{label}</label>
